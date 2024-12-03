@@ -30,13 +30,13 @@ app.post('/login', (req, res) => {
 
   if (!user) {
     // Register new user
-    user = { id: Date.now(), username, password };
+    user = { id: Date.now().toString(), username, password };
     users.push(user);
     writeJSONFile('users.json', users);
-    res.status(201).json({ message: 'User registered successfully', userId: user.id });
+    res.status(201).json({ message: 'User registered successfully', authReceipt: user.id });
   } else if (user.password === password) {
     // Successful login
-    res.status(200).json({ message: 'Login successful', userId: user.id });
+    res.status(200).json({ message: 'Login successful', authReceipt: user.id });
   } else {
     // Incorrect password
     res.status(401).json({ message: 'Incorrect password' });
@@ -45,12 +45,12 @@ app.post('/login', (req, res) => {
 
 // Middleware to check authentication
 const authenticate = (req, res, next) => {
-  const { userId } = req.headers;
-  if (!userId) {
+  const { authReceipt } = req.headers;
+  if (!authReceipt) {
     return res.status(401).json({ message: 'User ID header is missing' });
   }
   const users = readJSONFile('users.json');
-  const user = users.find((u) => u.id == userId);
+  const user = users.find((u) => u.id == authReceipt);
   if (!user) {
     return res.status(401).json({ message: 'Invalid User ID' });
   }
