@@ -45,12 +45,14 @@ app.post('/login', (req, res) => {
 
 // Middleware to check authentication
 const authenticate = (req, res, next) => {
-  const { authReceipt } = req.headers;
-  if (!authReceipt) {
-    return res.status(401).json({ message: 'User ID header is missing' });
+  const { authreceipt } = req.headers;
+  console.log('authreceipt: ', authreceipt);
+  
+  if (!authreceipt) {
+    return res.status(401).json({ message: 'Auth Receipt header is missing' });
   }
   const users = readJSONFile('users.json');
-  const user = users.find((u) => u.id == authReceipt);
+  const user = users.find((u) => u.id == authreceipt);
   if (!user) {
     return res.status(401).json({ message: 'Invalid User ID' });
   }
